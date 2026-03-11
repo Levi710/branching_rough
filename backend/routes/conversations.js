@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../database/db.js';
 import { buildMainContext } from '../services/contextManager.js';
-import { generateResponse } from '../services/ai.js';
+import { generateResponse, generateConversationTitle } from '../services/ai.js';
 
 const router = Router();
 
@@ -72,6 +72,17 @@ router.post('/:id/messages', async (req, res) => {
     db.prepare(
       "UPDATE conversations SET updated_at = datetime('now') WHERE id = ?"
     ).run(conversationId);
+
+    // Asynchronous Auto-naming logic logic matching the user's pseudocode:
+    // If this is the FIRST message exchange, trigger title generation.
+    const messageCount = db.prepare('SELECT count(*) as count FROM messages WHERE conversation_id = ?').get(conversationId).count;
+    if (messageCount === 2) { // 1 user + 1 AI
+      generateConversationTitle(content, aiResponse).then(title => {
+        if (title && title !== 'New Conversation') {
+          db.prepare('UPDATE conversations SET title = ? WHERE id = ?').run(title, conversationId);
+        }
+      }).catch(err => console.error('Background title gen failed:', err));
+    }
 
     res.json({
       userMessage: { id: userMsgId, conversation_id: conversationId, role: 'user', content },

@@ -43,14 +43,12 @@ export default function App() {
     }
   }, []);
 
-  const handleNewConversation = async () => {
-    try {
-      const convo = await api.createConversation({ title: 'New Conversation' });
-      setConversations(prev => [convo, ...prev]);
-      loadConversation(convo.id);
-    } catch (err) {
-      console.error('Failed to create conversation:', err);
-    }
+  const handleNewConversation = () => {
+    // Lazy creation: Just reset UI to empty state instead of calling backend immediately
+    setActiveConversation({ id: null, title: 'New Conversation', messages: [] });
+    setBranches([]);
+    setActiveBranch(null);
+    setShowVault(false);
   };
 
   const handleDeleteConversation = async (id) => {
@@ -68,9 +66,14 @@ export default function App() {
 
   const handleSendMessage = async (content) => {
     if (!activeConversation) return;
+    
+    let conversationId = activeConversation.id;
+    let isFirstMessage = false;
+
     try {
       setLoading(true);
-      // Optimistic update: add user message immediately
+
+      // 1. Optimistic Update (Immediate UI response before DB)
       setActiveConversation(prev => ({
         ...prev,
         messages: [...(prev.messages || []), {
@@ -81,9 +84,20 @@ export default function App() {
         }],
       }));
 
-      const result = await api.sendMessage(activeConversation.id, content);
+      // 2. Lazy Create Conversation if this is the very first message!
+      if (!conversationId) {
+        const newConvo = await api.createConversation({ title: 'New Conversation' });
+        conversationId = newConvo.id;
+        
+        setActiveConversation(prev => ({ ...prev, id: conversationId }));
+        setConversations(prev => [newConvo, ...prev]); // Add to sidebar
+        isFirstMessage = true;
+      }
+
+      // 3. Send the message payload
+      const result = await api.sendMessage(conversationId, content);
       
-      // Replace temp message and add AI message
+      // 4. Update UI with AI response and replace temporary user message ID
       setActiveConversation(prev => ({
         ...prev,
         messages: [
@@ -92,6 +106,11 @@ export default function App() {
           result.aiMessage,
         ],
       }));
+
+      // 5. If it was the first message, poll the backend briefly to get the async LLM title
+      if (isFirstMessage) {
+        pollForTitleUpdate(conversationId);
+      }
     } catch (err) {
       console.error('Failed to send message:', err);
       // Remove temp message on error
@@ -102,6 +121,28 @@ export default function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Polls backend a few times to get the updated title right after creation
+  const pollForTitleUpdate = (convoId) => {
+    let attempts = 0;
+    const interval = setInterval(async () => {
+      attempts++;
+      try {
+        const convo = await api.getConversation(convoId);
+        if (convo && convo.title !== 'New Conversation') {
+          // Success: title was generated in background
+          clearInterval(interval);
+          setConversations(prev => prev.map(c => c.id === convo.id ? convo : c));
+          setActiveConversation(prev => prev?.id === convo.id ? { ...prev, title: convo.title } : prev);
+        } else if (attempts >= 10) {
+          // Stop polling after 20 seconds
+          clearInterval(interval);
+        }
+      } catch (e) {
+        clearInterval(interval);
+      }
+    }, 2000);
   };
 
   const handleCreateBranch = async (anchorMessageId, title, anchorText) => {

@@ -93,3 +93,33 @@ Respond in this exact JSON format:
     };
   }
 }
+
+/**
+ * Generate a concise title for a new conversation asynchronously.
+ * @param {string} userMessage - First user message
+ * @param {string} aiResponse - First AI response
+ * @returns {Promise<string>}
+ */
+export async function generateConversationTitle(userMessage, aiResponse) {
+  try {
+    const prompt = `
+Generate a short 4-6 word title for this conversation.
+User: "${userMessage}"
+Assistant: "${aiResponse.slice(0, 200)}"
+Reply with ONLY the title, no quotes.
+`;
+    // Using a low max_tokens to keep it fast/cheap (simulating the claude-haiku approach)
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [{ role: 'user', content: prompt }],
+      model,
+      temperature: 0.3,
+      max_tokens: 20,
+    });
+    
+    let title = chatCompletion.choices[0]?.message?.content || 'New Conversation';
+    return title.replace(/^"|"$/g, '').trim();
+  } catch (error) {
+    console.error('Title generation error:', error.message);
+    return 'New Conversation';
+  }
+}
