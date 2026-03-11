@@ -247,19 +247,11 @@ export default function App() {
       setLoading(true);
       const result = await api.resolveBranch(activeBranch.id);
       
-      // Update branch status
+      // Update branch status locally
       setActiveBranch(prev => ({ ...prev, status: 'resolved' }));
       setBranches(prev =>
         prev.map(b => b.id === activeBranch.id ? { ...b, status: 'resolved' } : b)
       );
-
-      // Add summary message to main conversation
-      if (result.summaryMessage) {
-        setActiveConversation(prev => ({
-          ...prev,
-          messages: [...(prev.messages || []), result.summaryMessage],
-        }));
-      }
     } catch (err) {
       console.error('Failed to resolve branch:', err);
     } finally {
@@ -288,27 +280,32 @@ export default function App() {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-atonement-cyan/5 rounded-full blur-3xl" />
       </div>
 
+      {/* Sidebar Overlay (Mobile) */}
+      <div className="sidebar-overlay" onClick={handleChatAreaClick} />
+
       {/* Left Panel */}
-      <LeftPanel
-        conversations={conversations}
-        activeConversationId={activeConversation?.id}
-        branches={branches}
-        activeBranchId={activeBranch?.id}
-        onNewConversation={handleNewConversation}
-        onSelectConversation={loadConversation}
-        onDeleteConversation={handleDeleteConversation}
-        onRenameConversation={handleRenameConversation}
-        onShareConversation={handleShareConversation}
-        onOpenBranch={handleOpenBranch}
-        onShowVault={handleShowVault}
-        showVault={showVault}
-        isOpen={sidebarOpen}
-        onToggle={toggleSidebar}
-        editingId={editingId}
-        setEditingId={setEditingId}
-        draftTitle={draftTitle}
-        setDraftTitle={setDraftTitle}
-      />
+      <div className="sidebar-container h-full">
+        <LeftPanel
+          conversations={conversations}
+          activeConversationId={activeConversation?.id}
+          branches={branches}
+          activeBranchId={activeBranch?.id}
+          onNewConversation={handleNewConversation}
+          onSelectConversation={loadConversation}
+          onDeleteConversation={handleDeleteConversation}
+          onRenameConversation={handleRenameConversation}
+          onShareConversation={handleShareConversation}
+          onOpenBranch={handleOpenBranch}
+          onShowVault={handleShowVault}
+          showVault={showVault}
+          isOpen={sidebarOpen}
+          onToggle={toggleSidebar}
+          editingId={editingId}
+          setEditingId={setEditingId}
+          draftTitle={draftTitle}
+          setDraftTitle={setDraftTitle}
+        />
+      </div>
 
       {/* Center Panel - Main Chat */}
       <div className="flex-1 flex flex-col min-w-0" onClick={handleChatAreaClick}>
@@ -325,7 +322,7 @@ export default function App() {
 
       {/* Right Panel - Branch or Vault */}
       {(activeBranch || showVault) && (
-        <div className="w-[420px] flex-shrink-0 animate-slide-in-right hidden md:block">
+        <div className="w-[420px] flex-shrink-0 animate-slide-in-right hidden md:block h-full overflow-hidden border-l border-atonement-border/20">
           {showVault ? (
             <ReferenceVault
               notes={referenceNotes}

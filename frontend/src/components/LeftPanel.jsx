@@ -51,9 +51,7 @@ export default function LeftPanel({
   };
   return (
     <div 
-      className={`flex-shrink-0 h-full flex flex-col glass-strong border-r border-atonement-border/30 relative z-40 transition-all duration-300 ease-in-out ${
-        isOpen ? 'w-[280px] opacity-100' : 'w-0 opacity-0 pointer-events-none'
-      }`}
+      className="h-full flex flex-col glass-strong border-r border-atonement-border/30 relative z-40 transition-all duration-300 ease-in-out"
     >
       {/* Header */}
       <div className="p-4 border-b border-atonement-border/30 overflow-hidden whitespace-nowrap">

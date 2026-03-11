@@ -118,25 +118,58 @@ body {
   pointer-events: none;
 }
 
-/* Mobile Sidebar & Layout */
+/* Sidebar Transitions */
+.sidebar-container {
+  width: 280px;
+  transition: all 0.3s ease-in-out;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.sidebar-closed .sidebar-container {
+  width: 0;
+  opacity: 0;
+}
+
+/* Mobile Sidebar & Layout Overlay */
 @media (max-width: 768px) {
-  .sidebar-open .w-0 {
-    width: 280px !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    position: fixed;
-    z-index: 50;
-    height: 100%;
+  .sidebar-container {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    width: 280px;
+    transform: translateX(-100%);
+    opacity: 0;
+    background: white;
+  }
+  
+  .sidebar-open .sidebar-container {
+    transform: translateX(0);
+    opacity: 1;
   }
 
-  .sidebar-open::after {
-    content: '';
+  .sidebar-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(4px);
-    z-index: 45;
-    animation: fadeIn 0.3s ease-out;
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar-open .sidebar-overlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  /* Prevent main chat from squishing if sidebar is fixed */
+  .sidebar-open .flex-1 {
+    width: 100%;
   }
 }
 
