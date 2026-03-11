@@ -44,8 +44,10 @@ export default function MainChat({
         )}
         <div className="flex-1 flex flex-col items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-atonement-accent to-atonement-cyan flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
-            <Target size={36} className="text-white" />
+          <div className="mx-auto mb-6 relative">
+            <div className="w-24 h-24 rounded-3xl bg-white p-1 shadow-2xl animate-pulse-glow">
+              <img src="/assets/penguin.png" alt="Atonement" className="w-full h-full rounded-2xl object-cover" />
+            </div>
           </div>
           <h2 className="text-3xl font-bold gradient-text">Atonement</h2>
           <p className="text-atonement-muted text-lg max-w-md">
@@ -64,24 +66,33 @@ export default function MainChat({
   const messages = conversation.messages || [];
 
   return (
-    <div className="flex-1 flex flex-col relative min-w-0">
+    <div className="flex-1 flex flex-col relative h-full min-w-0 overflow-hidden">
       {/* Header */}
-      <div className="glass-strong border-b border-atonement-border/30 px-6 py-3.5 flex items-center gap-3">
-        {!sidebarOpen && (
-          <button 
-            onClick={onToggleSidebar}
-            className="p-1.5 rounded-lg hover:bg-atonement-card text-atonement-muted transition-all"
-          >
-            <PanelLeftOpen size={18} />
-          </button>
-        )}
-        <div className="w-2 h-2 rounded-full bg-atonement-success animate-pulse" />
-        <h2 className="text-base font-semibold text-atonement-text truncate">
-          {conversation.title}
-        </h2>
-        <span className="text-xs text-atonement-muted bg-atonement-card px-2 py-0.5 rounded-full">
-          {messages.length} messages
-        </span>
+      <div className="glass-strong border-b border-atonement-border/30 px-6 py-3.5 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {!sidebarOpen && (
+            <button 
+              onClick={onToggleSidebar}
+              className="p-1.5 rounded-lg hover:bg-atonement-card text-atonement-muted transition-all"
+            >
+              <PanelLeftOpen size={18} />
+            </button>
+          )}
+          <div className="w-8 h-8 rounded-lg overflow-hidden border border-atonement-border/30 relative">
+            <img src="/assets/penguin.png" alt="AI" className="w-full h-full object-cover" />
+            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-atonement-success border-2 border-white rounded-full animate-pulse" />
+          </div>
+          <div>
+            <h2 className="text-base font-semibold text-atonement-text truncate max-w-[200px] md:max-w-md">
+              {conversation.title}
+            </h2>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-atonement-muted">
+                {messages.length} messages
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Messages */}

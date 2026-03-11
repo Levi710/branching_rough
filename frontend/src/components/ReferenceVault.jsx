@@ -20,8 +20,8 @@ export default function ReferenceVault({ notes, onClose, onOpenBranch }) {
       <div className="px-4 py-3 border-b border-atonement-border/30">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-atonement-warning to-atonement-accent flex items-center justify-center">
-              <BookOpen size={13} className="text-white" />
+            <div className="w-7 h-7 rounded-lg overflow-hidden border border-atonement-border/20">
+              <img src="/assets/penguin.png" alt="Icon" className="w-full h-full object-cover" />
             </div>
             <h3 className="text-sm font-semibold text-atonement-text">Reference Vault</h3>
           </div>

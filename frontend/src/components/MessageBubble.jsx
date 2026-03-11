@@ -95,8 +95,8 @@ export default function MessageBubble({ message, onCreateBranch, branchCount, is
     <div className={`msg-enter group flex gap-3 my-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
       {/* AI Avatar */}
       {!isUser && (
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-atonement-accent to-atonement-cyan flex items-center justify-center flex-shrink-0 mt-1">
-          <Bot size={14} className="text-white" />
+        <div className="flex-shrink-0 mt-1">
+          <img src="/assets/penguin.png" alt="AI" className="w-8 h-8 rounded-lg object-cover shadow-sm" />
         </div>
       )}
 

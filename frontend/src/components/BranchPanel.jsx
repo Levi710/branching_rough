@@ -28,8 +28,8 @@ export default function BranchPanel({ branch, onSendMessage, onResolve, onClose,
       <div className="px-4 py-3 border-b border-atonement-border/30">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-atonement-cyan to-atonement-accent flex items-center justify-center">
-              <GitBranch size={13} className="text-white" />
+            <div className="w-7 h-7 rounded-lg overflow-hidden border border-atonement-border/20">
+              <img src="/assets/penguin.png" alt="AI" className="w-full h-full object-cover" />
             </div>
             <div>
               <h3 className="text-sm font-semibold text-atonement-text truncate max-w-[240px]">
@@ -87,8 +87,8 @@ export default function BranchPanel({ branch, onSendMessage, onResolve, onClose,
               className={`msg-enter flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role !== 'user' && (
-                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-atonement-cyan to-atonement-accent flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Bot size={11} className="text-white" />
+                <div className="flex-shrink-0 mt-0.5">
+                  <img src="/assets/penguin.png" alt="AI" className="w-6 h-6 rounded-md object-cover shadow-sm" />
                 </div>
               )}
               <div

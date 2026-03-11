@@ -57,8 +57,8 @@ export default function LeftPanel({
       <div className="p-4 border-b border-atonement-border/30 overflow-hidden whitespace-nowrap">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-atonement-accent to-atonement-cyan flex items-center justify-center">
-              <GitBranch size={16} className="text-white" />
+            <div className="w-8 h-8 rounded-lg overflow-hidden border border-atonement-border/30">
+              <img src="/assets/penguin.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-lg font-bold gradient-text">Atonement</h1>
           </div>
