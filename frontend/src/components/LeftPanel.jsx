@@ -14,6 +14,13 @@ import {
   Share2,
 } from 'lucide-react';
 
+export default function LeftPanel({
+  conversations,
+  activeConversationId,
+  branches,
+  activeBranchId,
+  onNewConversation,
+  onSelectConversation,
   onDeleteConversation,
   onRenameConversation,
   onShareConversation,
