@@ -50,7 +50,7 @@ export default function ReferenceVault({ notes, onClose, onOpenBranch }) {
       <div className="flex-1 overflow-y-auto p-3 space-y-3">
         {filteredNotes.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center gap-2">
-            <BookOpen size={28} className="text-atonement-muted/20" />
+            <img src="/assets/penguin.png" className="w-8 h-8 opacity-20 filter grayscale" alt="" />
             <p className="text-xs text-atonement-muted/50">
               {searchQuery
                 ? 'No references match your search.'
@@ -66,7 +66,7 @@ export default function ReferenceVault({ notes, onClose, onOpenBranch }) {
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-1.5">
-                  <GitBranch size={12} className="text-atonement-accent" />
+                  <img src="/assets/penguin.png" className="w-3.5 h-3.5 rounded-sm object-cover" alt="" />
                   <h4 className="text-xs font-semibold text-atonement-text">
                     {note.branch_title || note.title}
                   </h4>

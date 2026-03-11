@@ -158,7 +158,7 @@ export default function LeftPanel({
       {branches.length > 0 && (
         <div className="border-t border-atonement-border/30 p-2 max-h-[30%] overflow-y-auto">
           <div className="px-2 py-1.5 text-xs font-semibold text-atonement-muted uppercase tracking-wider flex items-center gap-1.5">
-            <GitBranch size={12} />
+            <img src="/assets/penguin.png" className="w-3.5 h-3.5 rounded-sm object-cover" alt="" />
             Branches
           </div>
           {branches.map((branch) => (
@@ -192,7 +192,7 @@ export default function LeftPanel({
               : 'bg-atonement-card hover:bg-atonement-card/80 text-atonement-muted border border-atonement-border/30'
           }`}
         >
-          <BookOpen size={16} />
+          <img src="/assets/penguin.png" className="w-4 h-4 rounded-sm object-cover" alt="" />
           <span className="text-sm font-medium">Reference Vault</span>
         </button>
       </div>

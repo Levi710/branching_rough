@@ -146,7 +146,7 @@ export default function MessageBubble({ message, onCreateBranch, branchCount, is
 
           {branchCount > 0 && (
             <span className="text-[10px] text-atonement-cyan flex items-center gap-0.5">
-              <GitBranch size={10} /> {branchCount}
+              <img src="/assets/penguin.png" className="w-2.5 h-2.5 rounded-xs" alt="" /> {branchCount}
             </span>
           )}
 
@@ -154,7 +154,7 @@ export default function MessageBubble({ message, onCreateBranch, branchCount, is
             onClick={() => setShowBranchMenu(!showBranchMenu)}
             className="opacity-0 group-hover:opacity-100 text-[10px] text-atonement-muted hover:text-atonement-cyan flex items-center gap-0.5 transition-all"
           >
-            <GitBranch size={10} />
+            <img src="/assets/penguin.png" className="w-2.5 h-2.5 rounded-xs" alt="" />
             Branch
           </button>
         </div>

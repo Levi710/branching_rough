@@ -75,7 +75,7 @@ export default function BranchPanel({ branch, onSendMessage, onResolve, onClose,
           </div>
         ) : messages.length === 0 && !isResolved ? (
           <div className="flex flex-col items-center justify-center h-full text-center gap-2">
-            <GitBranch size={24} className="text-atonement-muted/30" />
+            <img src="/assets/penguin.png" className="w-10 h-10 opacity-20 filter grayscale" alt="" />
             <p className="text-xs text-atonement-muted/60">
               Start exploring this topic in isolation.
             </p>
