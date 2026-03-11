@@ -20,9 +20,10 @@ export default function BranchPanel({ branch, onSendMessage, onResolve, onClose,
 
   const messages = branch.messages || [];
   const isResolved = branch.status === 'resolved';
+  const isCreationLoading = branch.status === 'loading';
 
   return (
-    <div className="h-full flex flex-col glass-strong border-l border-atonement-border/30">
+    <div className="h-full flex flex-col glass-strong border-l border-atonement-border/30 overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 border-b border-atonement-border/30">
         <div className="flex items-center justify-between mb-2">
@@ -67,7 +68,12 @@ export default function BranchPanel({ branch, onSendMessage, onResolve, onClose,
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
-        {messages.length === 0 && !isResolved ? (
+        {isCreationLoading ? (
+          <div className="flex flex-col items-center justify-center h-full gap-3">
+             <Loader2 size={24} className="text-atonement-cyan animate-spin" />
+             <p className="text-xs text-atonement-muted">Creating rough sheet...</p>
+          </div>
+        ) : messages.length === 0 && !isResolved ? (
           <div className="flex flex-col items-center justify-center h-full text-center gap-2">
             <GitBranch size={24} className="text-atonement-muted/30" />
             <p className="text-xs text-atonement-muted/60">

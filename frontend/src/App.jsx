@@ -181,6 +181,17 @@ export default function App() {
   };
 
   const handleCreateBranch = async (anchorMessageId, title, anchorText) => {
+    // Immediate feedback: Set a placeholder branch while loading
+    setShowVault(false);
+    const tempBranch = { 
+      id: 'loading-' + Date.now(), 
+      title: title || anchorText?.slice(0, 30) + '...', 
+      status: 'loading',
+      messages: [],
+      anchor_text: anchorText
+    };
+    setActiveBranch(tempBranch);
+    
     try {
       const branch = await api.createBranch({
         anchor_message_id: anchorMessageId,
@@ -189,9 +200,9 @@ export default function App() {
       });
       setBranches(prev => [branch, ...prev]);
       setActiveBranch(branch);
-      setShowVault(false);
     } catch (err) {
       console.error('Failed to create branch:', err);
+      setActiveBranch(null); // Clear on error
     }
   };
 
@@ -274,10 +285,10 @@ export default function App() {
 
   return (
     <div className={`flex h-screen w-screen bg-atonement-bg overflow-hidden relative ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-      {/* Background gradient effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-atonement-accent/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-atonement-cyan/5 rounded-full blur-3xl" />
+      {/* Background gradient effects - Simplified for performance */}
+      <div className="fixed inset-0 pointer-events-none opacity-20">
+        <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-atonement-accent/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-atonement-cyan/20 rounded-full blur-[120px]" />
       </div>
 
       {/* Sidebar Overlay (Mobile) */}
@@ -322,7 +333,7 @@ export default function App() {
 
       {/* Right Panel - Branch or Vault */}
       {(activeBranch || showVault) && (
-        <div className="w-[420px] flex-shrink-0 animate-slide-in-right hidden md:block h-full overflow-hidden border-l border-atonement-border/20">
+        <div className="w-full md:w-[420px] flex-shrink-0 animate-slide-in-right md:relative branch-panel-mobile md:block h-full overflow-hidden border-l border-atonement-border/20 z-[60] md:z-10">
           {showVault ? (
             <ReferenceVault
               notes={referenceNotes}

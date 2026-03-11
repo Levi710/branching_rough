@@ -15,7 +15,7 @@ export default function ReferenceVault({ notes, onClose, onOpenBranch }) {
   });
 
   return (
-    <div className="h-full flex flex-col glass-strong border-l border-atonement-border/30">
+    <div className="h-full flex flex-col glass-strong border-l border-atonement-border/30 overflow-hidden">
       {/* Header */}
       <div className="px-4 py-3 border-b border-atonement-border/30">
         <div className="flex items-center justify-between mb-3">
