@@ -15,4 +15,11 @@ db.pragma('foreign_keys = ON');
 const schema = readFileSync(join(__dirname, 'schema.sql'), 'utf-8');
 db.exec(schema);
 
+// Migration: Add user_id column if it doesn't exist (for existing databases)
+try {
+  db.prepare("ALTER TABLE conversations ADD COLUMN user_id TEXT").run();
+} catch (e) {
+  // Column already exists or table doesn't exist yet
+}
+
 export default db;

@@ -1,9 +1,24 @@
 const API_BASE = '/api';
 
+// Helper to get or create a persistent user ID for privacy
+const getUserId = () => {
+  let userId = localStorage.getItem('atonement_user_id');
+  if (!userId) {
+    userId = crypto.randomUUID();
+    localStorage.setItem('atonement_user_id', userId);
+  }
+  return userId;
+};
+
 async function request(url, options = {}) {
+  const headers = { 
+    'Content-Type': 'application/json',
+    'X-User-Id': getUserId() 
+  };
+  
   const res = await fetch(`${API_BASE}${url}`, {
-    headers: { 'Content-Type': 'application/json' },
     ...options,
+    headers: { ...headers, ...options.headers },
   });
   if (!res.ok) {
     const error = await res.json().catch(() => ({ error: res.statusText }));

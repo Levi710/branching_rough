@@ -10,27 +10,28 @@ const router = Router();
 router.post('/', (req, res) => {
   const { title, goal } = req.body;
   const id = uuidv4();
+  const userId = req.userId;
   
   db.prepare(
-    'INSERT INTO conversations (id, title, goal) VALUES (?, ?, ?)'
-  ).run(id, title || 'New Conversation', goal || '');
+    'INSERT INTO conversations (id, title, goal, user_id) VALUES (?, ?, ?, ?)'
+  ).run(id, title || 'New Conversation', goal || '', userId);
   
   const conversation = db.prepare('SELECT * FROM conversations WHERE id = ?').get(id);
   res.status(201).json(conversation);
 });
 
-// List all conversations
+// List all conversations for the current user
 router.get('/', (req, res) => {
   const conversations = db.prepare(
-    'SELECT * FROM conversations ORDER BY updated_at DESC'
-  ).all();
+    'SELECT * FROM conversations WHERE user_id = ? ORDER BY updated_at DESC'
+  ).all(req.userId);
   res.json(conversations);
 });
 
 // Get a conversation with its messages
 router.get('/:id', (req, res) => {
-  const conversation = db.prepare('SELECT * FROM conversations WHERE id = ?').get(req.params.id);
-  if (!conversation) return res.status(404).json({ error: 'Conversation not found' });
+  const conversation = db.prepare('SELECT * FROM conversations WHERE id = ? AND user_id = ?').get(req.params.id, req.userId);
+  if (!conversation) return res.status(404).json({ error: 'Conversation not found or access denied' });
 
   const messages = db.prepare(
     'SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC'
@@ -49,8 +50,8 @@ router.post('/:id/messages', async (req, res) => {
     const { content } = req.body;
     const conversationId = req.params.id;
 
-    const conversation = db.prepare('SELECT * FROM conversations WHERE id = ?').get(conversationId);
-    if (!conversation) return res.status(404).json({ error: 'Conversation not found' });
+    const conversation = db.prepare('SELECT * FROM conversations WHERE id = ? AND user_id = ?').get(conversationId, req.userId);
+    if (!conversation) return res.status(404).json({ error: 'Conversation not found or access denied' });
 
     // Save user message
     const userMsgId = uuidv4();
@@ -98,8 +99,8 @@ router.post('/:id/messages', async (req, res) => {
 // Update conversation goal
 router.patch('/:id', (req, res) => {
   const { title, goal } = req.body;
-  const conversation = db.prepare('SELECT * FROM conversations WHERE id = ?').get(req.params.id);
-  if (!conversation) return res.status(404).json({ error: 'Conversation not found' });
+  const conversation = db.prepare('SELECT * FROM conversations WHERE id = ? AND user_id = ?').get(req.params.id, req.userId);
+  if (!conversation) return res.status(404).json({ error: 'Conversation not found or access denied' });
 
   if (title) db.prepare('UPDATE conversations SET title = ? WHERE id = ?').run(title, req.params.id);
   if (goal) db.prepare('UPDATE conversations SET goal = ? WHERE id = ?').run(goal, req.params.id);
@@ -110,6 +111,9 @@ router.patch('/:id', (req, res) => {
 
 // Delete a conversation
 router.delete('/:id', (req, res) => {
+  const conversation = db.prepare('SELECT * FROM conversations WHERE id = ? AND user_id = ?').get(req.params.id, req.userId);
+  if (!conversation) return res.status(404).json({ error: 'Conversation not found or access denied' });
+
   db.prepare('DELETE FROM conversations WHERE id = ?').run(req.params.id);
   res.json({ success: true });
 });
