@@ -32,6 +32,7 @@ export default function App() {
       setConversations(convos);
     } catch (err) {
       console.error('Failed to load conversations:', err);
+      setToast({ visible: true, message: 'Connection lost. Please try again.' });
     }
   };
 
@@ -45,6 +46,7 @@ export default function App() {
       setShowVault(false);
     } catch (err) {
       console.error('Failed to load conversation:', err);
+      setToast({ visible: true, message: 'Failed to load conversation history.' });
     } finally {
       setLoading(false);
     }
@@ -68,6 +70,7 @@ export default function App() {
       }
     } catch (err) {
       console.error('Failed to delete conversation:', err);
+      setToast({ visible: true, message: 'Could not delete conversation.' });
     }
   };
 
@@ -81,6 +84,7 @@ export default function App() {
       setEditingId(null);
     } catch (err) {
       console.error('Failed to rename conversation:', err);
+      setToast({ visible: true, message: 'Rename failed.' });
     }
   };
 
@@ -92,6 +96,7 @@ export default function App() {
       setToast({ visible: true, message: 'Share link copied to clipboard!' });
     } catch (err) {
       console.error('Failed to share conversation:', err);
+      setToast({ visible: true, message: 'Share link creation failed.' });
     }
   };
 
@@ -151,11 +156,11 @@ export default function App() {
         pollForTitleUpdate(conversationId);
       }
     } catch (err) {
-      console.error('Failed to send message:', err);
+      setToast({ visible: true, message: 'Failed to send message.' });
       // Remove temp message on error
       setActiveConversation(prev => ({
         ...prev,
-        messages: (prev.messages || []).filter(m => !m.id.startsWith('temp-')),
+        messages: (prev.messages || []).filter(m => (m.id?.toString() || '').startsWith('temp-') === false),
       }));
     } finally {
       setLoading(false);
@@ -212,6 +217,7 @@ export default function App() {
       setShowVault(false);
     } catch (err) {
       console.error('Failed to open branch:', err);
+      setToast({ visible: true, message: 'Failed to load branch.' });
     }
   };
 
@@ -265,6 +271,7 @@ export default function App() {
       }));
     } catch (err) {
       console.error('Failed to send branch message:', err);
+      setToast({ visible: true, message: 'Failed to send message.' });
     } finally {
       setLoading(false);
     }
@@ -284,6 +291,7 @@ export default function App() {
       );
     } catch (err) {
       console.error('Failed to resolve branch:', err);
+      setToast({ visible: true, message: 'Failed to resolve branch.' });
     } finally {
       setLoading(false);
     }
@@ -299,6 +307,7 @@ export default function App() {
       setActiveBranch(null);
     } catch (err) {
       console.error('Failed to load reference notes:', err);
+      setToast({ visible: true, message: 'Vault is currently unavailable.' });
     }
   };
 

@@ -122,7 +122,12 @@ router.delete('/:id', (req, res) => {
 router.post('/:id/share', (req, res) => {
   try {
     const token = uuidv4();
-    db.prepare('UPDATE conversations SET share_token = ? WHERE id = ?').run(token, req.params.id);
+    const result = db.prepare('UPDATE conversations SET share_token = ? WHERE id = ? AND user_id = ?').run(token, req.params.id, req.userId);
+    
+    if (result.changes === 0) {
+      return res.status(404).json({ error: 'Conversation not found or access denied' });
+    }
+    
     res.json({ shareToken: token });
   } catch (err) {
     console.error('Share generation error:', err);
