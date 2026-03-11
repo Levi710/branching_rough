@@ -182,36 +182,25 @@ export default function App() {
     }, 2000);
   };
 
-  const handleCreateBranch = async (anchorMessageId, title, anchorText) => {
+  const handleCreateBranch = (anchorMessageId, title, anchorText) => {
     // Special case for "About" button
     if (anchorMessageId === 'about') {
       setShowAbout(true);
       return;
     }
 
-    // Immediate feedback: Set a placeholder branch while loading
+    // Lazy creation: Set a pending branch state without calling the backend
     setShowVault(false);
-    const tempBranch = { 
-      id: 'loading-' + Date.now(), 
-      title: title || anchorText?.slice(0, 30) + '...', 
-      status: 'loading',
+    const pendingBranch = { 
+      id: 'pending-' + Date.now(), 
+      anchor_message_id: anchorMessageId,
+      title: title || 'Rough Sheet', 
+      status: 'active',
       messages: [],
-      anchor_text: anchorText
+      anchor_text: anchorText,
+      isPending: true // Flag to identify unsaved branches
     };
-    setActiveBranch(tempBranch);
-    
-    try {
-      const branch = await api.createBranch({
-        anchor_message_id: anchorMessageId,
-        title: title || 'Rough Sheet',
-        anchor_text: anchorText,
-      });
-      setBranches(prev => [branch, ...prev]);
-      setActiveBranch(branch);
-    } catch (err) {
-      console.error('Failed to create branch:', err);
-      setActiveBranch(null); // Clear on error
-    }
+    setActiveBranch(pendingBranch);
   };
 
   const handleOpenBranch = async (branchId) => {
@@ -226,9 +215,31 @@ export default function App() {
 
   const handleSendBranchMessage = async (content) => {
     if (!activeBranch) return;
+    
+    let currentBranchId = activeBranch.id;
+    let isNewBranch = activeBranch.isPending;
+
     try {
       setLoading(true);
-      // Optimistic update
+
+      // 1. If branch is pending, create it now
+      if (isNewBranch) {
+        const newBranch = await api.createBranch({
+          anchor_message_id: activeBranch.anchor_message_id,
+          title: activeBranch.title,
+          anchor_text: activeBranch.anchor_text,
+        });
+        currentBranchId = newBranch.id;
+        setBranches(prev => [newBranch, ...prev]);
+        // Update local active branch state to switch from pending to real ID
+        setActiveBranch(prev => ({ 
+          ...prev, 
+          id: currentBranchId, 
+          isPending: false 
+        }));
+      }
+
+      // 2. Optimistic update for UI
       setActiveBranch(prev => ({
         ...prev,
         messages: [...(prev.messages || []), {
@@ -239,26 +250,24 @@ export default function App() {
         }],
       }));
 
-      const result = await api.sendBranchMessage(activeBranch.id, content);
+      // 3. Send message to backend
+      const result = await api.sendBranchMessage(currentBranchId, content);
       
       setActiveBranch(prev => ({
         ...prev,
         messages: [
-          ...(prev.messages || []).filter(m => !m.id.startsWith('temp-')),
+          ...(prev.messages || []).filter(m => !m.id?.toString().startsWith('temp-')),
           result.userMessage,
           result.aiMessage,
         ],
       }));
     } catch (err) {
       console.error('Failed to send branch message:', err);
-      setActiveBranch(prev => ({
-        ...prev,
-        messages: (prev.messages || []).filter(m => !m.id.startsWith('temp-')),
-      }));
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleResolveBranch = async () => {
     if (!activeBranch) return;
