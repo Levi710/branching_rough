@@ -353,79 +353,71 @@ export default function App() {
     }
   };
 
+  if (!isLoaded) {
+    return (
+      <div className="h-screen w-screen bg-atonement-bg flex flex-col items-center justify-center gap-4">
+        <div className="w-16 h-16 rounded-2xl bg-white p-2 shadow-2xl animate-pulse flex items-center justify-center">
+          <img src="/assets/penguin.png" alt="Loading" className="w-full h-full object-cover rounded-xl" />
+        </div>
+        <div className="flex gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-atonement-cyan typing-dot" />
+          <div className="w-2 h-2 rounded-full bg-atonement-cyan typing-dot" />
+          <div className="w-2 h-2 rounded-full bg-atonement-cyan typing-dot" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-      <SignedIn>
+      {/* If we are in shared mode, we show the shared UI regardless of login status */}
+      {isSharedMode ? (
         <div className={`flex h-screen w-screen bg-atonement-bg overflow-hidden relative ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-          {/* Background gradient effects - Simplified for performance */}
           <div className="fixed inset-0 pointer-events-none opacity-20">
             <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-atonement-accent/20 rounded-full blur-[120px]" />
             <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-atonement-cyan/20 rounded-full blur-[120px]" />
           </div>
-
-          {/* Sidebar Overlay (Mobile) */}
-          <div className="sidebar-overlay" onClick={handleChatAreaClick} />
-
-          {/* Left Panel */}
-          <div className="sidebar-container h-full">
-            <LeftPanel
-              conversations={isSharedMode ? [] : conversations}
-              activeConversationId={activeConversation?.id}
-              branches={branches}
-              activeBranchId={activeBranch?.id}
-              onNewConversation={isSharedMode ? () => window.location.href = '/' : handleNewConversation}
-              onSelectConversation={loadConversation}
-              onDeleteConversation={handleDeleteConversation}
-              onRenameConversation={handleRenameConversation}
-              onShareConversation={handleShareConversation}
-              onOpenBranch={handleOpenBranch}
-              onShowVault={handleShowVault}
-              onShowAbout={() => setShowAbout(true)}
-              showVault={showVault}
-              isOpen={sidebarOpen}
-              onToggle={toggleSidebar}
-              editingId={editingId}
-              setEditingId={setEditingId}
-              draftTitle={draftTitle}
-              setDraftTitle={setDraftTitle}
-              userButton={<UserButton appearance={{ elements: { userButtonAvatarBox: "w-8 h-8 rounded-lg" } }} />}
-            />
-          </div>
-
-          {/* Center Panel - Main Chat */}
-          <div className="flex-1 flex flex-col min-w-0" onClick={handleChatAreaClick}>
-            <MainChat
+          <div className="flex-1 flex flex-col min-w-0">
+             <div className="px-6 py-4 flex items-center justify-between border-b border-atonement-border/10 z-50">
+                <div className="flex items-center gap-2">
+                  <img src="/assets/penguin.png" className="w-8 h-8" alt="Logo" />
+                  <span className="font-bold gradient-text">Atonement</span>
+                </div>
+                {isSignedIn ? (
+                  <UserButton appearance={{ elements: { userButtonAvatarBox: "w-8 h-8 rounded-lg" } }} />
+                ) : (
+                  <SignInButton mode="modal">
+                    <button className="px-5 py-2 rounded-xl bg-atonement-accent text-white font-medium text-sm hover:scale-105 transition-all">
+                      Sign In to Chat
+                    </button>
+                  </SignInButton>
+                )}
+             </div>
+             <MainChat
               conversation={activeConversation}
-              onSendMessage={handleSendMessage}
+              onSendMessage={isSignedIn ? handleSendMessage : () => {}} 
               onCreateBranch={handleCreateBranch}
               loading={loading}
               branches={branches}
-              sidebarOpen={sidebarOpen}
-              onToggleSidebar={toggleSidebar}
+              sidebarOpen={false}
+              onToggleSidebar={() => {}}
             />
           </div>
-
-          {/* Right Panel - Branch or Vault */}
           {(activeBranch || showVault) && (
             <div className="w-full md:w-[420px] flex-shrink-0 animate-slide-in-right md:relative branch-panel-mobile md:block h-full overflow-hidden border-l border-atonement-border/20 z-[60] md:z-10">
               {showVault ? (
-                <ReferenceVault
-                  notes={referenceNotes}
-                  onClose={() => setShowVault(false)}
-                  onOpenBranch={handleOpenBranch}
-                />
+                <ReferenceVault notes={referenceNotes} onClose={() => setShowVault(false)} onOpenBranch={handleOpenBranch} />
               ) : (
-                <BranchPanel
-                  branch={activeBranch}
-                  onSendMessage={handleSendBranchMessage}
-                  onResolve={handleResolveBranch}
-                  onClose={() => setActiveBranch(null)}
-                  loading={loading}
+                <BranchPanel 
+                  branch={activeBranch} 
+                  onSendMessage={isSignedIn ? handleSendBranchMessage : () => {}} 
+                  onResolve={isSignedIn ? handleResolveBranch : () => {}} 
+                  onClose={() => setActiveBranch(null)} 
+                  loading={loading} 
                 />
               )}
             </div>
           )}
-          {/* Modals & Notifications */}
           <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
           <Toast 
             visible={toast.visible} 
@@ -433,70 +425,108 @@ export default function App() {
             onClose={() => setToast({ ...toast, visible: false })} 
           />
         </div>
-      </SignedIn>
+      ) : (
+        <>
+          <SignedIn>
+            <div className={`flex h-screen w-screen bg-atonement-bg overflow-hidden relative ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
+              {/* Background gradient effects - Simplified for performance */}
+              <div className="fixed inset-0 pointer-events-none opacity-20">
+                <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-atonement-accent/20 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-atonement-cyan/20 rounded-full blur-[120px]" />
+              </div>
 
-      <SignedOut>
-        {isSharedMode ? (
-          // Allow shared view without login
-          <div className={`flex h-screen w-screen bg-atonement-bg overflow-hidden relative ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
-            <div className="fixed inset-0 pointer-events-none opacity-20">
-              <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-atonement-accent/20 rounded-full blur-[120px]" />
-              <div className="absolute bottom-0 left-0 w-1/2 h-1/2 bg-atonement-cyan/20 rounded-full blur-[120px]" />
-            </div>
-            <div className="flex-1 flex flex-col min-w-0">
-               <div className="px-6 py-4 flex items-center justify-between border-b border-atonement-border/10">
-                  <div className="flex items-center gap-2">
-                    <img src="/assets/penguin.png" className="w-8 h-8" alt="Logo" />
-                    <span className="font-bold gradient-text">Atonement</span>
-                  </div>
-                  <SignInButton mode="modal">
-                    <button className="px-5 py-2 rounded-xl bg-atonement-accent text-white font-medium text-sm hover:scale-105 transition-all">
-                      Sign In to Chat
-                    </button>
-                  </SignInButton>
-               </div>
-               <MainChat
-                conversation={activeConversation}
-                onSendMessage={() => {}} // Disabled
-                onCreateBranch={handleCreateBranch}
-                loading={loading}
-                branches={branches}
-                sidebarOpen={false}
-                onToggleSidebar={() => {}}
+              {/* Sidebar Overlay (Mobile) */}
+              <div className="sidebar-overlay" onClick={handleChatAreaClick} />
+
+              {/* Left Panel */}
+              <div className="sidebar-container h-full">
+                <LeftPanel
+                  conversations={conversations}
+                  activeConversationId={activeConversation?.id}
+                  branches={branches}
+                  activeBranchId={activeBranch?.id}
+                  onNewConversation={handleNewConversation}
+                  onSelectConversation={loadConversation}
+                  onDeleteConversation={handleDeleteConversation}
+                  onRenameConversation={handleRenameConversation}
+                  onShareConversation={handleShareConversation}
+                  onOpenBranch={handleOpenBranch}
+                  onShowVault={handleShowVault}
+                  onShowAbout={() => setShowAbout(true)}
+                  showVault={showVault}
+                  isOpen={sidebarOpen}
+                  onToggle={toggleSidebar}
+                  editingId={editingId}
+                  setEditingId={setEditingId}
+                  draftTitle={draftTitle}
+                  setDraftTitle={setDraftTitle}
+                  userButton={<UserButton appearance={{ elements: { userButtonAvatarBox: "w-8 h-8 rounded-lg" } }} />}
+                />
+              </div>
+
+              {/* Center Panel - Main Chat */}
+              <div className="flex-1 flex flex-col min-w-0" onClick={handleChatAreaClick}>
+                <MainChat
+                  conversation={activeConversation}
+                  onSendMessage={handleSendMessage}
+                  onCreateBranch={handleCreateBranch}
+                  loading={loading}
+                  branches={branches}
+                  sidebarOpen={sidebarOpen}
+                  onToggleSidebar={toggleSidebar}
+                />
+              </div>
+
+              {/* Right Panel - Branch or Vault */}
+              {(activeBranch || showVault) && (
+                <div className="w-full md:w-[420px] flex-shrink-0 animate-slide-in-right md:relative branch-panel-mobile md:block h-full overflow-hidden border-l border-atonement-border/20 z-[60] md:z-10">
+                  {showVault ? (
+                    <ReferenceVault
+                      notes={referenceNotes}
+                      onClose={() => setShowVault(false)}
+                      onOpenBranch={handleOpenBranch}
+                    />
+                  ) : (
+                    <BranchPanel
+                      branch={activeBranch}
+                      onSendMessage={handleSendBranchMessage}
+                      onResolve={handleResolveBranch}
+                      onClose={() => setActiveBranch(null)}
+                      loading={loading}
+                    />
+                  )}
+                </div>
+              )}
+              {/* Modals & Notifications */}
+              <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
+              <Toast 
+                visible={toast.visible} 
+                message={toast.message} 
+                onClose={() => setToast({ ...toast, visible: false })} 
               />
             </div>
-            {(activeBranch || showVault) && (
-              <div className="w-full md:w-[420px] flex-shrink-0 animate-slide-in-right md:relative branch-panel-mobile md:block h-full overflow-hidden border-l border-atonement-border/20 z-[60] md:z-10">
-                {showVault ? (
-                  <ReferenceVault notes={referenceNotes} onClose={() => setShowVault(false)} onOpenBranch={handleOpenBranch} />
-                ) : (
-                  <BranchPanel branch={activeBranch} onSendMessage={() => {}} onResolve={() => {}} onClose={() => setActiveBranch(null)} loading={loading} />
-                )}
-              </div>
-            )}
-            <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
-          </div>
-        ) : (
-          // Full screen login for personal usage
-          <div className="h-screen w-screen bg-atonement-bg flex flex-col items-center justify-center p-6 text-center">
-             <div className="mb-8 relative">
-                <div className="w-32 h-32 rounded-3xl bg-white p-2 shadow-2xl animate-pulse-glow flex items-center justify-center">
-                  <img src="/assets/penguin.png" alt="Atonement" className="w-full h-full rounded-2xl object-cover" />
-                </div>
-              </div>
-              <h1 className="text-5xl font-extrabold gradient-text mb-4">Atonement</h1>
-              <p className="text-atonement-muted text-xl mb-12 max-w-md font-medium">
-                The most private way to think, branch, and learn with AI.
-              </p>
-              <SignInButton mode="modal">
-                <button className="px-10 py-4 bg-white text-atonement-bg rounded-2xl font-bold text-lg hover:bg-atonement-cyan hover:text-white transition-all transform hover:scale-110 shadow-xl border-2 border-atonement-border/50">
-                  Get Started for Free
-                </button>
-              </SignInButton>
-              <div className="mt-12 flex items-center gap-6 opacity-40">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-atonement-success" />
-                  <span className="text-xs font-semibold text-atonement-text uppercase tracking-widest">Secure</span>
+          </SignedIn>
+
+          <SignedOut>
+              <div className="h-screen w-screen bg-atonement-bg flex flex-col items-center justify-center p-6 text-center">
+                 <div className="mb-8 relative">
+                    <div className="w-32 h-32 rounded-3xl bg-white p-2 shadow-2xl animate-pulse-glow flex items-center justify-center">
+                      <img src="/assets/penguin.png" alt="Atonement" className="w-full h-full rounded-2xl object-cover" />
+                    </div>
+                  </div>
+                  <h1 className="text-5xl font-extrabold gradient-text mb-4">Atonement</h1>
+                  <p className="text-atonement-muted text-xl mb-12 max-w-md font-medium">
+                    The most private way to think, branch, and learn with AI.
+                  </p>
+                  <SignInButton mode="modal">
+                    <button className="px-10 py-4 bg-white text-atonement-bg rounded-2xl font-bold text-lg hover:bg-atonement-cyan hover:text-white transition-all transform hover:scale-110 shadow-xl border-2 border-atonement-border/50">
+                      Get Started for Free
+                    </button>
+                  </SignInButton>
+                  <div className="mt-12 flex items-center gap-6 opacity-40">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-atonement-success" />
+                      <span className="text-xs font-semibold text-atonement-text uppercase tracking-widest">Secure</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-atonement-cyan" />
@@ -504,8 +534,9 @@ export default function App() {
                 </div>
               </div>
           </div>
-        )}
-      </SignedOut>
+          </SignedOut>
+        </>
+      )}
     </>
   );
 }
