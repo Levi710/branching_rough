@@ -84,9 +84,10 @@ router.post('/:id/messages', async (req, res) => {
       }).catch(err => console.error('Background title gen failed:', err));
     }
 
+    const now = new Date().toISOString();
     res.json({
-      userMessage: { id: userMsgId, conversation_id: conversationId, role: 'user', content },
-      aiMessage: { id: aiMsgId, conversation_id: conversationId, role: 'assistant', content: aiResponse },
+      userMessage: { id: userMsgId, conversation_id: conversationId, role: 'user', content, created_at: now },
+      aiMessage: { id: aiMsgId, conversation_id: conversationId, role: 'assistant', content: aiResponse, created_at: now },
     });
   } catch (error) {
     console.error('Message error:', error);

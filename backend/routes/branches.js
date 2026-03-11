@@ -70,9 +70,10 @@ router.post('/:id/messages', async (req, res) => {
       'INSERT INTO branch_messages (id, branch_id, role, content) VALUES (?, ?, ?, ?)'
     ).run(aiMsgId, branchId, 'assistant', aiResponse);
 
+    const now = new Date().toISOString();
     res.json({
-      userMessage: { id: userMsgId, branch_id: branchId, role: 'user', content },
-      aiMessage: { id: aiMsgId, branch_id: branchId, role: 'assistant', content: aiResponse },
+      userMessage: { id: userMsgId, branch_id: branchId, role: 'user', content, created_at: now },
+      aiMessage: { id: aiMsgId, branch_id: branchId, role: 'assistant', content: aiResponse, created_at: now },
     });
   } catch (error) {
     console.error('Branch message error:', error);
@@ -123,7 +124,7 @@ router.post('/:id/resolve', async (req, res) => {
     res.json({
       branch: db.prepare('SELECT * FROM branches WHERE id = ?').get(branchId),
       referenceNote: { id: noteId, summary, tags },
-      summaryMessage: { id: summaryMsgId, content: summaryContent },
+      summaryMessage: { id: summaryMsgId, content: summaryContent, created_at: new Date().toISOString() },
     });
   } catch (error) {
     console.error('Resolve error:', error);

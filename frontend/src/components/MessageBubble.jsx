@@ -139,7 +139,9 @@ export default function MessageBubble({ message, onCreateBranch, branchCount, is
         {/* Branch indicator + manual branch action */}
         <div className="flex items-center gap-2 mt-1.5 px-1">
           <span className="text-[10px] text-atonement-muted/50">
-            {new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {message.created_at 
+              ? new Date(message.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+              : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
 
           {branchCount > 0 && (
