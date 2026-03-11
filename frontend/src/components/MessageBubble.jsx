@@ -43,8 +43,10 @@ export default function MessageBubble({ message, onCreateBranch, branchCount, is
   // Dismiss popover if user clicks elsewhere
   useEffect(() => {
     const dismiss = (e) => {
+      // If we clicked outside the bubble, close everything
       if (bubbleRef.current && !bubbleRef.current.contains(e.target)) {
         setSelectionPopover(null);
+        setShowBranchMenu(false);
       }
     };
     document.addEventListener('mousedown', dismiss);
@@ -124,7 +126,10 @@ export default function MessageBubble({ message, onCreateBranch, branchCount, is
             }}
           >
             <button
-              onMouseDown={(e) => e.preventDefault()} // keep selection alive
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }} // keep selection alive
               onClick={handleReplyToSelection}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-atonement-accent text-white text-xs font-semibold shadow-xl hover:bg-atonement-accent/85 active:scale-95 transition-all whitespace-nowrap"
             >
@@ -151,7 +156,11 @@ export default function MessageBubble({ message, onCreateBranch, branchCount, is
           )}
 
           <button
-            onClick={() => setShowBranchMenu(!showBranchMenu)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowBranchMenu(!showBranchMenu);
+              setSelectionPopover(null); // Close selection popover when opening manual menu
+            }}
             className="opacity-0 group-hover:opacity-100 text-[10px] text-atonement-muted hover:text-atonement-cyan flex items-center gap-0.5 transition-all"
           >
             <img src="/assets/penguin.png" className="w-2.5 h-2.5 rounded-xs" alt="" />
@@ -161,7 +170,11 @@ export default function MessageBubble({ message, onCreateBranch, branchCount, is
 
         {/* Manual branch creation popover (full message) */}
         {showBranchMenu && (
-          <div className="absolute top-full left-0 mt-2 glass-strong rounded-xl p-3 z-50 w-72 shadow-2xl animate-fade-in">
+          <div 
+            className="absolute top-full left-0 mt-2 glass-strong rounded-xl p-3 z-[100] w-72 shadow-2xl animate-fade-in"
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+          >
             <div className="text-xs font-semibold text-atonement-muted mb-2 uppercase tracking-wide">
               Create Rough Sheet
             </div>

@@ -13,9 +13,9 @@ export default function AboutModal({ isOpen, onClose }) {
     },
     {
       title: "How to Branch",
-      description: "See something interesting? Just select any text in a message or click 'Branch'. This creates a 'Rough Sheet' on the right.",
+      description: "Instantly explore any idea! You can create a branch by simply selecting any text in a message, or by clicking the 'Branch' button. This opens a 'Rough Sheet' on the right.",
       icon: <GitBranch className="text-atonement-accent" size={32} />,
-      benefit: "Explore sub-topics in total isolation from the main thread."
+      benefit: "Dive deep into specific sentences or topics without clutter."
     },
     {
       title: "The Benefit of Focus",
