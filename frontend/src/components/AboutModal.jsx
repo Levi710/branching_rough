@@ -24,8 +24,8 @@ export default function AboutModal({ isOpen, onClose }) {
       benefit: "Faster, more accurate answers without 'context pollution'."
     },
     {
-      title: "Resolve & Summarize",
-      description: "Done exploring? Click 'Resolve'. The AI will condense your long deep-dive into a compact summary for the main thread.",
+      title: "Resolve & Archieve",
+      description: "Done exploring? Click 'Resolve'. The AI will condense your long deep-dive into a compact summary and store it directly in your Reference Vault.",
       icon: <Share2 className="text-atonement-cyan" size={32} />,
       benefit: "Keep the main conversation high-level and readable."
     },

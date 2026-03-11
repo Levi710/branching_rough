@@ -135,13 +135,6 @@ router.post('/:id/resolve', async (req, res) => {
       'INSERT INTO reference_notes (id, branch_id, conversation_id, anchor_message_id, title, summary, tags) VALUES (?, ?, ?, ?, ?, ?, ?)'
     ).run(noteId, branchId, branch.conversation_id, branch.anchor_message_id, branch.title, summary, JSON.stringify(tags));
 
-    // Inject summary into main thread as a branch_summary message
-    const summaryMsgId = uuidv4();
-    const summaryContent = `📋 **Branch Resolved: "${branch.title}"**\n\n${summary}\n\n_Tags: ${tags.join(', ')}_`;
-    db.prepare(
-      'INSERT INTO messages (id, conversation_id, role, content) VALUES (?, ?, ?, ?)'
-    ).run(summaryMsgId, branch.conversation_id, 'branch_summary', summaryContent);
-
     // Mark branch as resolved
     db.prepare(
       "UPDATE branches SET status = 'resolved', resolved_at = datetime('now') WHERE id = ?"
@@ -150,7 +143,6 @@ router.post('/:id/resolve', async (req, res) => {
     res.json({
       branch: db.prepare('SELECT * FROM branches WHERE id = ?').get(branchId),
       referenceNote: { id: noteId, summary, tags },
-      summaryMessage: { id: summaryMsgId, content: summaryContent, created_at: new Date().toISOString() },
     });
   } catch (error) {
     console.error('Resolve error:', error);
