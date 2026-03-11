@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import MessageBubble from './MessageBubble';
-import { Send, Loader2, Target, PanelLeftOpen } from 'lucide-react';
+import { Send, Loader2, Target, PanelLeftOpen, Zap } from 'lucide-react';
 
 export default function MainChat({
   conversation,

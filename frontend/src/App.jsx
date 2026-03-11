@@ -138,7 +138,7 @@ export default function App() {
       setActiveConversation(prev => ({
         ...prev,
         messages: [
-          ...(prev.messages || []).filter(m => !m.id.startsWith('temp-')),
+          ...(prev.messages || []).filter(m => (m.id?.toString() || '').startsWith('temp-') === false),
           result.userMessage,
           result.aiMessage,
         ],
@@ -256,7 +256,7 @@ export default function App() {
       setActiveBranch(prev => ({
         ...prev,
         messages: [
-          ...(prev.messages || []).filter(m => !m.id?.toString().startsWith('temp-')),
+          ...(prev.messages || []).filter(m => (m.id?.toString() || '').startsWith('temp-') === false),
           result.userMessage,
           result.aiMessage,
         ],
