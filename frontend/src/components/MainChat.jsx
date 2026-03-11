@@ -57,6 +57,7 @@ export default function MainChat({
           </p>
         </div>
       </div>
+    </div>
     );
   }
 
