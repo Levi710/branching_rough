@@ -12,6 +12,7 @@ import {
   MoreVertical,
   Edit2,
   Share2,
+  Info,
 } from 'lucide-react';
 
 export default function LeftPanel({
@@ -26,6 +27,7 @@ export default function LeftPanel({
   onShareConversation,
   onOpenBranch,
   onShowVault,
+  onShowAbout,
   showVault,
   isOpen,
   onToggle,
@@ -61,6 +63,13 @@ export default function LeftPanel({
               <img src="/assets/penguin.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-lg font-bold gradient-text">Atonement</h1>
+            <button 
+              onClick={onShowAbout}
+              className="p-1 rounded-full hover:bg-atonement-card text-atonement-muted/60 hover:text-atonement-accent transition-all"
+              title="How to use"
+            >
+              <Info size={14} />
+            </button>
           </div>
           <button onClick={onToggle} className="p-1.5 rounded-lg hover:bg-atonement-card text-atonement-muted">
             <PanelLeftClose size={18} />

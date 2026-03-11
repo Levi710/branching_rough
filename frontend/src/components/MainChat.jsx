@@ -42,21 +42,30 @@ export default function MainChat({
             <PanelLeftOpen size={20} />
           </button>
         )}
-        <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="mx-auto mb-6 relative">
-            <div className="w-24 h-24 rounded-3xl bg-white p-1 shadow-2xl animate-pulse-glow">
+        <div className="flex-1 flex flex-col items-center justify-center p-6">
+        <div className="text-center space-y-4 max-w-xl flex flex-col items-center">
+          <div className="mb-6 relative">
+            <div className="w-24 h-24 rounded-3xl bg-white p-1 shadow-2xl animate-pulse-glow flex items-center justify-center">
               <img src="/assets/penguin.png" alt="Atonement" className="w-full h-full rounded-2xl object-cover" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold gradient-text">Atonement</h2>
-          <p className="text-atonement-muted text-lg max-w-md">
+          <h2 className="text-4xl font-extrabold gradient-text tracking-tight">Atonement</h2>
+          <p className="text-atonement-muted text-xl font-medium max-w-md">
             Branch-based context management for AI conversations.
           </p>
-          <p className="text-atonement-muted/70 text-sm max-w-sm">
-            Create a conversation to begin. Branch off messages to explore ideas
-            without polluting your main thread.
-          </p>
+          <div className="space-y-4 pt-4">
+            <p className="text-atonement-muted/70 text-sm max-w-sm">
+              Create a conversation to begin. Branch off messages to explore ideas
+              without polluting your main thread.
+            </p>
+            <button 
+              onClick={() => onCreateBranch('about', 'Opening Guide...')}
+              className="mt-6 flex items-center gap-2 px-8 py-3 bg-white/50 hover:bg-white/80 border border-atonement-border/30 rounded-2xl text-sm font-semibold text-atonement-text transition-all hover:scale-105 shadow-sm"
+            >
+              <Zap size={16} className="text-atonement-cyan" />
+              How it works
+            </button>
+          </div>
         </div>
       </div>
     </div>

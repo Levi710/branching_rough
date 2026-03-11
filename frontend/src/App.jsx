@@ -3,6 +3,7 @@ import LeftPanel from './components/LeftPanel';
 import MainChat from './components/MainChat';
 import BranchPanel from './components/BranchPanel';
 import ReferenceVault from './components/ReferenceVault';
+import AboutModal from './components/AboutModal';
 import * as api from './api';
 
 export default function App() {
@@ -16,6 +17,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [draftTitle, setDraftTitle] = useState('');
+  const [showAbout, setShowAbout] = useState(false);
 
   // Load conversations on mount
   useEffect(() => {
@@ -181,6 +183,12 @@ export default function App() {
   };
 
   const handleCreateBranch = async (anchorMessageId, title, anchorText) => {
+    // Special case for "About" button
+    if (anchorMessageId === 'about') {
+      setShowAbout(true);
+      return;
+    }
+
     // Immediate feedback: Set a placeholder branch while loading
     setShowVault(false);
     const tempBranch = { 
@@ -308,6 +316,7 @@ export default function App() {
           onShareConversation={handleShareConversation}
           onOpenBranch={handleOpenBranch}
           onShowVault={handleShowVault}
+          onShowAbout={() => setShowAbout(true)}
           showVault={showVault}
           isOpen={sidebarOpen}
           onToggle={toggleSidebar}
@@ -351,6 +360,8 @@ export default function App() {
           )}
         </div>
       )}
+      {/* Modals */}
+      <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
     </div>
   );
 }
