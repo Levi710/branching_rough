@@ -13,10 +13,28 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 7860;
 
-const clerk = createClerkClient({ 
-  secretKey: process.env.CLERK_SECRET_KEY,
-  publishableKey: process.env.CLERK_PUBLISHABLE_KEY 
-});
+// Helper to find Clerk keys from various possible environment variable names
+const getClerkKey = (type) => {
+  const variations = type === 'secret' 
+    ? ['CLERK_SECRET_KEY', 'SK_CLERK_SECRET_KEY']
+    : ['VITE_CLERK_PUBLISHABLE_KEY', 'CLERK_PUBLISHABLE_KEY', 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY'];
+  
+  for (const v of variations) {
+    if (process.env[v] && process.env[v].length > 10) return process.env[v];
+  }
+  return null;
+};
+
+const publishableKey = getClerkKey('public');
+const secretKey = getClerkKey('secret');
+
+const clerk = createClerkClient({ secretKey, publishableKey });
+
+if (publishableKey) {
+  console.log(`✅ Clerk Publishable Key detected (${publishableKey.substring(0, 10)}...)`);
+} else {
+  console.warn("⚠️ Clerk Publishable Key MISSING or too short.");
+}
 
 // Middleware
 app.use(cors());
