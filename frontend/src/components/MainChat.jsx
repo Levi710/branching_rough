@@ -134,26 +134,36 @@ export default function MainChat({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
+      {/* Input / Readonly Badge */}
       <div className="p-4 border-t border-atonement-border/20">
-        <form onSubmit={handleSubmit} className="relative">
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            disabled={loading}
-            className="w-full px-5 py-3.5 pr-14 rounded-2xl bg-atonement-card border border-atonement-border/40 text-atonement-text placeholder-atonement-muted/50 focus:outline-none focus:border-atonement-accent/50 focus:ring-1 focus:ring-atonement-accent/20 transition-all text-sm disabled:opacity-50"
-          />
-          <button
-            type="submit"
-            disabled={!input.trim() || loading}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-xl bg-atonement-accent hover:bg-atonement-accent/80 text-white transition-all duration-200 disabled:opacity-30 disabled:hover:bg-atonement-accent hover:scale-105 active:scale-95"
-          >
-            {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
-          </button>
-        </form>
+        {conversation.readonly ? (
+          <div className="flex flex-col items-center justify-center py-2 gap-1 text-atonement-muted">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-atonement-card border border-atonement-border/30">
+               <span className="w-2 h-2 rounded-full bg-atonement-success animate-pulse" />
+               <span className="text-xs font-semibold uppercase tracking-wider">Public View Only</span>
+            </div>
+            <p className="text-[10px] opacity-50">Create your own conversation to interact with AI.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="relative">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              disabled={loading}
+              className="w-full px-5 py-3.5 pr-14 rounded-2xl bg-atonement-card border border-atonement-border/40 text-atonement-text placeholder-atonement-muted/50 focus:outline-none focus:border-atonement-accent/50 focus:ring-1 focus:ring-atonement-accent/20 transition-all text-sm disabled:opacity-50"
+            />
+            <button
+              type="submit"
+              disabled={!input.trim() || loading}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 rounded-xl bg-atonement-accent hover:bg-atonement-accent/80 text-white transition-all duration-200 disabled:opacity-30 disabled:hover:bg-atonement-accent hover:scale-105 active:scale-95"
+            >
+              {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

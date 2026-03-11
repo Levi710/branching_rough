@@ -20,11 +20,40 @@ export default function App() {
   const [draftTitle, setDraftTitle] = useState('');
   const [showAbout, setShowAbout] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: '' });
+  const [isSharedMode, setIsSharedMode] = useState(false);
 
-  // Load conversations on mount
+  // Load conversations or shared link on mount
   useEffect(() => {
+    const path = window.location.pathname;
+    if (path.includes('/shared/')) {
+      const parts = path.split('/shared/');
+      const token = parts[1]?.split('/')[0];
+      if (token) {
+        loadSharedConversation(token);
+        return;
+      }
+    }
     loadConversations();
   }, []);
+
+  const loadSharedConversation = async (token) => {
+    try {
+      setLoading(true);
+      setIsSharedMode(true);
+      const convo = await api.getSharedConversation(token);
+      setActiveConversation(convo);
+      setBranches(convo.branches || []);
+      // Auto-close sidebar on mobile for shared links
+      if (window.innerWidth < 768) setSidebarOpen(false);
+    } catch (err) {
+      console.error('Failed to load shared conversation:', err);
+      setToast({ visible: true, message: 'This shared link is invalid or expired.' });
+      setIsSharedMode(false);
+      loadConversations();
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadConversations = async () => {
     try {
@@ -325,11 +354,11 @@ export default function App() {
       {/* Left Panel */}
       <div className="sidebar-container h-full">
         <LeftPanel
-          conversations={conversations}
+          conversations={isSharedMode ? [] : conversations}
           activeConversationId={activeConversation?.id}
           branches={branches}
           activeBranchId={activeBranch?.id}
-          onNewConversation={handleNewConversation}
+          onNewConversation={isSharedMode ? () => window.location.href = '/' : handleNewConversation}
           onSelectConversation={loadConversation}
           onDeleteConversation={handleDeleteConversation}
           onRenameConversation={handleRenameConversation}
