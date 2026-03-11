@@ -53,7 +53,7 @@ export default function MainChat({
           <p className="text-atonement-muted text-xl font-medium max-w-md">
             Branch-based context management for AI conversations.
           </p>
-          <div className="space-y-4 pt-4">
+          <div className="space-y-4 pt-4 flex flex-col items-center">
             <p className="text-atonement-muted/70 text-sm max-w-sm">
               Create a conversation to begin. Branch off messages to explore ideas
               without polluting your main thread.

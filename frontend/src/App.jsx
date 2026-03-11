@@ -4,6 +4,7 @@ import MainChat from './components/MainChat';
 import BranchPanel from './components/BranchPanel';
 import ReferenceVault from './components/ReferenceVault';
 import AboutModal from './components/AboutModal';
+import Toast from './components/Toast';
 import * as api from './api';
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
   const [editingId, setEditingId] = useState(null);
   const [draftTitle, setDraftTitle] = useState('');
   const [showAbout, setShowAbout] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '' });
 
   // Load conversations on mount
   useEffect(() => {
@@ -87,7 +89,7 @@ export default function App() {
       const { shareToken } = await api.shareConversation(id);
       const shareUrl = `${window.location.origin}/shared/${shareToken}`;
       await navigator.clipboard.writeText(shareUrl);
-      alert('Share link copied to clipboard!');
+      setToast({ visible: true, message: 'Share link copied to clipboard!' });
     } catch (err) {
       console.error('Failed to share conversation:', err);
     }
@@ -369,8 +371,13 @@ export default function App() {
           )}
         </div>
       )}
-      {/* Modals */}
+      {/* Modals & Notifications */}
       <AboutModal isOpen={showAbout} onClose={() => setShowAbout(false)} />
+      <Toast 
+        visible={toast.visible} 
+        message={toast.message} 
+        onClose={() => setToast({ ...toast, visible: false })} 
+      />
     </div>
   );
 }
