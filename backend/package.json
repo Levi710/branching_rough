@@ -1,0 +1,20 @@
+{
+  "name": "atonement-backend",
+  "version": "1.0.0",
+  "description": "Backend for Atonement – Branch-Based Context Management System",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.21.0",
+    "groq-sdk": "^1.1.1",
+    "uuid": "^10.0.0"
+  }
+}
