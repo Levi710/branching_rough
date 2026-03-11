@@ -9,17 +9,17 @@ export default {
       colors: {
         atonement: {
           bg: '#fee2e2',
-          surface: '#f9e2af',
-          card: '#f9e2af',
-          border: '#8b9db5',
+          surface: '#fef2f2',
+          card: '#ffffff',
+          border: '#cbd5e1',
           accent: '#8b9db5',
           'accent-light': '#a3b5c9',
           cyan: '#8b9db5',
           'cyan-light': '#a3b5c9',
-          text: '#1e293b',
+          text: '#334155',
           muted: '#64748b',
           success: '#10b981',
-          warning: '#f59e0b',
+          warning: '#f9e2af',
         },
       },
       animation: {
