@@ -13,6 +13,9 @@ export default function App() {
   const [referenceNotes, setReferenceNotes] = useState([]);
   const [showVault, setShowVault] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [draftTitle, setDraftTitle] = useState('');
 
   // Load conversations on mount
   useEffect(() => {
@@ -61,6 +64,38 @@ export default function App() {
       }
     } catch (err) {
       console.error('Failed to delete conversation:', err);
+    }
+  };
+
+  const handleRenameConversation = async (id, newTitle) => {
+    try {
+      const updated = await api.updateConversation(id, { title: newTitle });
+      setConversations(prev => prev.map(c => c.id === id ? updated : c));
+      if (activeConversation?.id === id) {
+        setActiveConversation(prev => ({ ...prev, title: updated.title }));
+      }
+      setEditingId(null);
+    } catch (err) {
+      console.error('Failed to rename conversation:', err);
+    }
+  };
+
+  const handleShareConversation = async (id) => {
+    try {
+      const { shareToken } = await api.shareConversation(id);
+      const shareUrl = `${window.location.origin}/shared/${shareToken}`;
+      await navigator.clipboard.writeText(shareUrl);
+      alert('Share link copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to share conversation:', err);
+    }
+  };
+
+  const toggleSidebar = () => setSidebarOpen(prev => !prev);
+  
+  const handleChatAreaClick = () => {
+    if (window.innerWidth < 768 && sidebarOpen) {
+      setSidebarOpen(false);
     }
   };
 
@@ -246,7 +281,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-screen bg-atonement-bg overflow-hidden">
+    <div className={`flex h-screen w-screen bg-atonement-bg overflow-hidden relative ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
       {/* Background gradient effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-atonement-accent/5 rounded-full blur-3xl" />
@@ -262,23 +297,35 @@ export default function App() {
         onNewConversation={handleNewConversation}
         onSelectConversation={loadConversation}
         onDeleteConversation={handleDeleteConversation}
+        onRenameConversation={handleRenameConversation}
+        onShareConversation={handleShareConversation}
         onOpenBranch={handleOpenBranch}
         onShowVault={handleShowVault}
         showVault={showVault}
+        isOpen={sidebarOpen}
+        onToggle={toggleSidebar}
+        editingId={editingId}
+        setEditingId={setEditingId}
+        draftTitle={draftTitle}
+        setDraftTitle={setDraftTitle}
       />
 
       {/* Center Panel - Main Chat */}
-      <MainChat
-        conversation={activeConversation}
-        onSendMessage={handleSendMessage}
-        onCreateBranch={handleCreateBranch}
-        loading={loading}
-        branches={branches}
-      />
+      <div className="flex-1 flex flex-col min-w-0" onClick={handleChatAreaClick}>
+        <MainChat
+          conversation={activeConversation}
+          onSendMessage={handleSendMessage}
+          onCreateBranch={handleCreateBranch}
+          loading={loading}
+          branches={branches}
+          sidebarOpen={sidebarOpen}
+          onToggleSidebar={toggleSidebar}
+        />
+      </div>
 
       {/* Right Panel - Branch or Vault */}
       {(activeBranch || showVault) && (
-        <div className="w-[420px] flex-shrink-0 animate-slide-in-right">
+        <div className="w-[420px] flex-shrink-0 animate-slide-in-right hidden md:block">
           {showVault ? (
             <ReferenceVault
               notes={referenceNotes}

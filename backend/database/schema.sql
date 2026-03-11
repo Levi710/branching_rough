@@ -5,7 +5,8 @@ CREATE TABLE IF NOT EXISTS conversations (
   title TEXT NOT NULL DEFAULT 'New Conversation',
   goal TEXT DEFAULT '',
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
-  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+  share_token TEXT UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS messages (

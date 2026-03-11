@@ -117,3 +117,30 @@ body {
   mask-composite: exclude;
   pointer-events: none;
 }
+
+/* Mobile Sidebar & Layout */
+@media (max-width: 768px) {
+  .sidebar-open .w-0 {
+    width: 280px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    position: fixed;
+    z-index: 50;
+    height: 100%;
+  }
+
+  .sidebar-open::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 45;
+    animation: fadeIn 0.3s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

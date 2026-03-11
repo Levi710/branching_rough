@@ -113,4 +113,32 @@ router.delete('/:id', (req, res) => {
   res.json({ success: true });
 });
 
+// Share a conversation (Generate token)
+router.post('/:id/share', (req, res) => {
+  try {
+    const token = uuidv4();
+    db.prepare('UPDATE conversations SET share_token = ? WHERE id = ?').run(token, req.params.id);
+    res.json({ shareToken: token });
+  } catch (err) {
+    console.error('Share generation error:', err);
+    res.status(500).json({ error: 'Failed to generate share link' });
+  }
+});
+
+// Get a shared read-only conversation
+router.get('/shared/:token', (req, res) => {
+  const conversation = db.prepare('SELECT * FROM conversations WHERE share_token = ?').get(req.params.token);
+  if (!conversation) return res.status(404).json({ error: 'Shared conversation not found' });
+
+  const messages = db.prepare(
+    'SELECT * FROM messages WHERE conversation_id = ? ORDER BY created_at ASC'
+  ).all(conversation.id);
+
+  const branches = db.prepare(
+    'SELECT * FROM branches WHERE conversation_id = ? ORDER BY created_at ASC'
+  ).all(conversation.id);
+
+  res.json({ ...conversation, messages, branches, readonly: true });
+});
+
 export default router;

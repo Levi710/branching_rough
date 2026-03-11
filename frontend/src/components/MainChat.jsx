@@ -1,13 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
 import MessageBubble from './MessageBubble';
-import { Send, Loader2, Target } from 'lucide-react';
+import { Send, Loader2, Target, PanelLeftOpen } from 'lucide-react';
 
-export default function MainChat({
-  conversation,
-  onSendMessage,
   onCreateBranch,
   loading,
   branches,
+  sidebarOpen,
+  onToggleSidebar,
 }) {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
@@ -31,7 +29,16 @@ export default function MainChat({
 
   if (!conversation) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center relative z-10">
+      <div className="flex-1 flex flex-col relative z-10">
+        {!sidebarOpen && (
+          <button 
+            onClick={onToggleSidebar}
+            className="absolute top-4 left-4 p-2 rounded-lg glass border border-atonement-border/30 text-atonement-muted hover:text-atonement-accent transition-all z-50"
+          >
+            <PanelLeftOpen size={20} />
+          </button>
+        )}
+        <div className="flex-1 flex flex-col items-center justify-center">
         <div className="text-center space-y-4">
           <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-atonement-accent to-atonement-cyan flex items-center justify-center mx-auto mb-6 animate-pulse-glow">
             <Target size={36} className="text-white" />
@@ -52,9 +59,17 @@ export default function MainChat({
   const messages = conversation.messages || [];
 
   return (
-    <div className="flex-1 flex flex-col relative z-10 min-w-0">
+    <div className="flex-1 flex flex-col relative min-w-0">
       {/* Header */}
       <div className="glass-strong border-b border-atonement-border/30 px-6 py-3.5 flex items-center gap-3">
+        {!sidebarOpen && (
+          <button 
+            onClick={onToggleSidebar}
+            className="p-1.5 rounded-lg hover:bg-atonement-card text-atonement-muted transition-all"
+          >
+            <PanelLeftOpen size={18} />
+          </button>
+        )}
         <div className="w-2 h-2 rounded-full bg-atonement-success animate-pulse" />
         <h2 className="text-base font-semibold text-atonement-text truncate">
           {conversation.title}

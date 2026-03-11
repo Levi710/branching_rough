@@ -34,6 +34,12 @@ export const updateConversation = (id, data) =>
 export const deleteConversation = (id) =>
   request(`/conversations/${id}`, { method: 'DELETE' });
 
+export const shareConversation = (id) =>
+  request(`/conversations/${id}/share`, { method: 'POST' });
+
+export const getSharedConversation = (token) =>
+  request(`/conversations/shared/${token}`);
+
 // Branches
 export const createBranch = (data) =>
   request('/branches', { method: 'POST', body: JSON.stringify(data) });
