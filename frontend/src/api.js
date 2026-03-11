@@ -1,19 +1,18 @@
 const API_BASE = '/api';
 
-// Helper to get or create a persistent user ID for privacy
-const getUserId = () => {
-  let userId = localStorage.getItem('atonement_user_id');
-  if (!userId) {
-    userId = crypto.randomUUID();
-    localStorage.setItem('atonement_user_id', userId);
-  }
-  return userId;
+// Globally accessible token fetcher set by the Auth component
+let getTokenFn = async () => null;
+
+export const setTokenFetcher = (fn) => {
+  getTokenFn = fn;
 };
 
 async function request(url, options = {}) {
+  const token = await getTokenFn();
+  
   const headers = { 
     'Content-Type': 'application/json',
-    'X-User-Id': getUserId() 
+    ...(token && { 'Authorization': `Bearer ${token}` })
   };
   
   const res = await fetch(`${API_BASE}${url}`, {

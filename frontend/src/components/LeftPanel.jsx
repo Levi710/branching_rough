@@ -35,6 +35,7 @@ export default function LeftPanel({
   setEditingId,
   draftTitle,
   setDraftTitle,
+  userButton,
 }) {
   const [menuOpenId, setMenuOpenId] = React.useState(null);
 
@@ -191,19 +192,24 @@ export default function LeftPanel({
         </div>
       )}
 
-      {/* Reference Vault Button */}
-      <div className="p-3 border-t border-atonement-border/30">
+      {/* Footer Controls */}
+      <div className="p-3 border-t border-atonement-border/30 flex items-center gap-2">
         <button
           onClick={onShowVault}
-          className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+          className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
             showVault
               ? 'bg-atonement-cyan/20 text-atonement-cyan-light border border-atonement-cyan/30'
               : 'bg-atonement-card hover:bg-atonement-card/80 text-atonement-muted border border-atonement-border/30'
           }`}
         >
           <img src="/assets/penguin.png" className="w-4 h-4 rounded-sm object-cover" alt="" />
-          <span className="text-sm font-medium">Reference Vault</span>
+          <span className="text-sm font-medium">Vault</span>
         </button>
+        {userButton && (
+          <div className="flex-shrink-0">
+            {userButton}
+          </div>
+        )}
       </div>
     </div>
   );
